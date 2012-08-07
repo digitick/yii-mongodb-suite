@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Ianaré Sévi
  * @author Philippe Gaultier <pgaultier@ibitux.com>
@@ -39,13 +40,13 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	 * @var string the name of the initialization script that would be executed before the whole test set runs.
 	 * Defaults to 'init.php'. If the script does not exist, every collection with a fixture file will be reset.
 	 */
-	public $initScript='init.php';
+	public $initScript = 'init.php';
 	/**
 	 * @var string the suffix for fixture initialization scripts.
 	 * If a collection is associated with such a script whose name is CollectionName suffixed this property value,
 	 * then the script will be executed each time before the table is reset.
 	 */
-	public $initScriptSuffix='.init.php';
+	public $initScriptSuffix = '.init.php';
 	/**
 	 * @var string the base path containing all fixtures. Defaults to null, meaning
 	 * the path 'protected/tests/fixtures'.
@@ -56,14 +57,12 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	 * Note, data in this database may be deleted or modified during testing.
 	 * Make sure you have a backup database.
 	 */
-	public $connectionID='mongodb';
-
+	public $connectionID = 'mongodb';
 	private $_mongoDb;
-
 	private $_fixtures;
-	private $_rows;				// fixture name, row alias => row
-	private $_records;			// fixture name, row alias => record (or class name)
-	private $_collectionList;	// list of collections available in database
+	private $_rows; // fixture name, row alias => row
+	private $_records;   // fixture name, row alias => record (or class name)
+	private $_collectionList; // list of collections available in database
 
 	/**
 	 * Initializes this application component.
@@ -71,10 +70,10 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	public function init()
 	{
 		parent::init();
-		if($this->basePath===null)
-			$this->basePath=Yii::getPathOfAlias('application.tests.fixtures');
-		else if(strpos($this->basePath, 'application.') === 0)
-			$this->basePath=Yii::getPathOfAlias($this->basePath);
+		if ($this->basePath === null)
+			$this->basePath = Yii::getPathOfAlias('application.tests.fixtures');
+		else if (strpos($this->basePath, 'application.') === 0)
+			$this->basePath = Yii::getPathOfAlias($this->basePath);
 
 		$this->prepare();
 	}
@@ -85,12 +84,11 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	 */
 	public function getDbConnection()
 	{
-		if($this->_mongoDb===null)
+		if ($this->_mongoDb === null)
 		{
-			$this->_mongoDb=Yii::app()->getComponent($this->connectionID)->getDbInstance();
-			if(!$this->_mongoDb instanceof MongoDB)
-				throw new EMongoException(Yii::t('yii','EMongoDbFixtureManager.connectionID "{id}" is invalid. Please make sure it refers to the ID of a CDbConnection application component.',
-					array('{id}'=>$this->connectionID)));
+			$this->_mongoDb = Yii::app()->getComponent($this->connectionID)->getDbInstance();
+			if (!$this->_mongoDb instanceof MongoDB)
+				throw new EMongoException(Yii::t('yii', 'EMongoDbFixtureManager.connectionID "{id}" is invalid. Please make sure it refers to the ID of a CDbConnection application component.', array('{id}' => $this->connectionID)));
 		}
 		return $this->_mongoDb;
 	}
@@ -102,12 +100,12 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	 */
 	public function prepare()
 	{
-		$initFile=$this->basePath . DIRECTORY_SEPARATOR . $this->initScript;
-		if(is_file($initFile))
+		$initFile = $this->basePath . DIRECTORY_SEPARATOR . $this->initScript;
+		if (is_file($initFile))
 			require($initFile);
 		else
 		{
-			foreach($this->getFixtures() as $collectionName=>$fixturePath)
+			foreach ($this->getFixtures() as $collectionName => $fixturePath)
 			{
 				$this->resetCollection($collectionName);
 				$this->loadFixture($collectionName);
@@ -125,8 +123,8 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	 */
 	public function resetCollection($collectionName)
 	{
-		$initFile=$this->basePath . DIRECTORY_SEPARATOR . $collectionName . $this->initScriptSuffix;
-		if(is_file($initFile))
+		$initFile = $this->basePath . DIRECTORY_SEPARATOR . $collectionName . $this->initScriptSuffix;
+		if (is_file($initFile))
 			require($initFile);
 		else
 			$this->truncateCollection($collectionName);
@@ -145,18 +143,18 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	 */
 	public function loadFixture($collectionName)
 	{
-		$fileName=$this->basePath.DIRECTORY_SEPARATOR.$collectionName.'.php';
-		if(!is_file($fileName))
+		$fileName = $this->basePath . DIRECTORY_SEPARATOR . $collectionName . '.php';
+		if (!is_file($fileName))
 		{
-			echo "Could not find fixture: ".$fileName;
+			echo "Could not find fixture: " . $fileName;
 			return false;
 		}
 
-		$rows=array();
-		foreach(require($fileName) as $alias=>$row)
+		$rows = array();
+		foreach (require($fileName) as $alias => $row)
 		{
 			$this->getDbConnection()->{$collectionName}->save($row);
-			$rows[$alias]=$row;
+			$rows[$alias] = $row;
 		}
 		return $rows;
 	}
@@ -171,11 +169,12 @@ class EMongoDbFixtureManager extends CApplicationComponent
 		if ($this->_collectionList === null)
 		{
 			$this->_collectionList = array();
-			foreach($this->getDbConnection()->listCollections() as $collection)
+			foreach ($this->getDbConnection()->listCollections() as $collection)
 				$this->_collectionList[] = $collection->getName();
 		}
 		return in_array($collectionName, $this->_collectionList);
 	}
+
 	/**
 	 * Returns the information of the available fixtures.
 	 * This method will search for all PHP files under {@link basePath}.
@@ -184,21 +183,21 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	 */
 	public function getFixtures()
 	{
-		if($this->_fixtures===null)
+		if ($this->_fixtures === null)
 		{
-			$this->_fixtures=array();
-			$folder=opendir($this->basePath);
-			$suffixLen=strlen($this->initScriptSuffix);
-			while($file=readdir($folder))
+			$this->_fixtures = array();
+			$folder = opendir($this->basePath);
+			$suffixLen = strlen($this->initScriptSuffix);
+			while ($file = readdir($folder))
 			{
-				if($file==='.' || $file==='..' || $file===$this->initScript)
+				if ($file === '.' || $file === '..' || $file === $this->initScript)
 					continue;
-				$path=$this->basePath.DIRECTORY_SEPARATOR.$file;
-				if(substr($file,-4)==='.php' && is_file($path) && substr($file,-$suffixLen)!==$this->initScriptSuffix)
+				$path = $this->basePath . DIRECTORY_SEPARATOR . $file;
+				if (substr($file, -4) === '.php' && is_file($path) && substr($file, -$suffixLen) !== $this->initScriptSuffix)
 				{
-					$collectionName=substr($file,0,-4);
-					if($this->isCollection($collectionName) === true)
-						$this->_fixtures[$collectionName]=$path;
+					$collectionName = substr($file, 0, -4);
+					if ($this->isCollection($collectionName) === true)
+						$this->_fixtures[$collectionName] = $path;
 				}
 			}
 			closedir($folder);
@@ -221,8 +220,8 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	 */
 	public function truncateCollections()
 	{
-		foreach($this->getDbConnection()->listCollections() as $collection)
-				$this->truncateCollection($collection->getName());
+		foreach ($this->getDbConnection()->listCollections() as $collection)
+			$this->truncateCollection($collection->getName());
 	}
 
 	/**
@@ -240,29 +239,29 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	 */
 	public function load($fixtures)
 	{
-		$this->_rows=array();
-		$this->_records=array();
-		foreach($fixtures as $fixtureName=>$collectionName)
+		$this->_rows = array();
+		$this->_records = array();
+		foreach ($fixtures as $fixtureName => $collectionName)
 		{
-			if($collectionName[0]===':')
+			if ($collectionName[0] === ':')
 			{
-				$collectionName=substr($collectionName,1);
+				$collectionName = substr($collectionName, 1);
 				unset($modelClass);
 			}
 			else
 			{
-				$modelClass=Yii::import($collectionName,true);
-				$collectionName=EMongoDocument::model($modelClass)->getCollectionName();
+				$modelClass = Yii::import($collectionName, true);
+				$collectionName = EMongoDocument::model($modelClass)->getCollectionName();
 			}
 			$this->resetCollection($collectionName);
-			$rows=$this->loadFixture($collectionName);
-			if(is_array($rows) && is_string($fixtureName))
+			$rows = $this->loadFixture($collectionName);
+			if (is_array($rows) && is_string($fixtureName))
 			{
-				$this->_rows[$fixtureName]=$rows;
-				if(isset($modelClass))
+				$this->_rows[$fixtureName] = $rows;
+				if (isset($modelClass))
 				{
-					foreach(array_keys($rows) as $alias)
-						$this->_records[$fixtureName][$alias]=$modelClass;
+					foreach (array_keys($rows) as $alias)
+						$this->_records[$fixtureName][$alias] = $modelClass;
 				}
 			}
 		}
@@ -276,7 +275,7 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	 */
 	public function getRows($name)
 	{
-		if(isset($this->_rows[$name]))
+		if (isset($this->_rows[$name]))
 			return $this->_rows[$name];
 		else
 			return false;
@@ -289,20 +288,21 @@ class EMongoDbFixtureManager extends CApplicationComponent
 	 * @return EMongoDocument the MongoDocument instance. False is returned
 	 * if there is no such fixture document.
 	 */
-	public function getRecord($name,$alias)
+	public function getRecord($name, $alias)
 	{
-		if(isset($this->_records[$name][$alias]))
+		if (isset($this->_records[$name][$alias]))
 		{
-			if(is_string($this->_records[$name][$alias]))
+			if (is_string($this->_records[$name][$alias]))
 			{
-				$row=$this->_rows[$name][$alias];
-				$model=EMongoDocument::model($this->_records[$name][$alias]);
+				$row = $this->_rows[$name][$alias];
+				$model = EMongoDocument::model($this->_records[$name][$alias]);
 				$pk = $row['_id'];
-				$this->_records[$name][$alias]=$model->findByPk($pk);
+				$this->_records[$name][$alias] = $model->findByPk($pk);
 			}
 			return $this->_records[$name][$alias];
 		}
 		else
 			return false;
 	}
+
 }

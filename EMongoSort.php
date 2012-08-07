@@ -31,7 +31,8 @@ class EMongoSort extends CSort
 	public function applyOrder($criteria)
 	{
 		$order = $this->getOrderBy();
-		if (!empty($order)) {
+		if (!empty($order))
+		{
 			$criteria->setSort($order);
 			// todo JOIN this new array properly with existing sort criteria - it just overwrites it now
 			//if(!empty($criteria->order))
@@ -50,7 +51,8 @@ class EMongoSort extends CSort
 		$directions = $this->getDirections();
 		if (empty($directions))
 			return is_array($this->defaultOrder) ? $this->defaultOrder : array(); // use the defaultOrder
-		else {
+		else
+		{
 			$orders = array();
 			foreach ($directions as $attribute => $direction)
 				$orders[$attribute] = $direction;
@@ -75,7 +77,9 @@ class EMongoSort extends CSort
 		if (($definition = $this->resolveAttribute($attribute)) === false)
 			return $label;
 		$directions = $this->getDirections();
-		if (isset($directions[$attribute])) {
+
+		if (isset($directions[$attribute]))
+		{
 			$class = ($directions[$attribute] == EMongoCriteria::SORT_DESC) ? 'desc' : 'asc';
 			if (isset($htmlOptions['class']))
 				$htmlOptions['class'].=' ' . $class;
@@ -121,16 +125,19 @@ class EMongoSort extends CSort
 	 */
 	public function getDirections()
 	{
-		if ($this->_directions === null) {
+		if ($this->_directions === null)
+		{
 			$this->_directions = array();
-			if (isset($_GET[$this->sortVar])) {
+			if (isset($_GET[$this->sortVar]))
+			{
 				$attributes = explode($this->separators[0], $_GET[$this->sortVar]);
 				foreach ($attributes as $attribute)
 				{
 					if (($pos = strrpos($attribute, $this->separators[1])) !== false)
 					{
 						$descending = substr($attribute, $pos + 1) === $this->descTag;
-						if ($descending) {
+						if ($descending)
+						{
 							$attribute = substr($attribute, 0, $pos);
 							$direction = EMongoCriteria::SORT_DESC;
 						}

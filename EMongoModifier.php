@@ -30,18 +30,17 @@ class EMongoModifier extends CComponent
 	 * @var array $modifiers supported modifiers
 	 */
 	public static $modifiers = array(
-		'inc'		=> '$inc',
-		'set'		=> '$set',
-		'unset'		=> '$unset',
-		'push'		=> '$push',
-		'pushAll'	=> '$pushAll',
-		'addToSet'	=> '$addToSet',
-		'pop'		=> '$pop',
-		'pull'		=> '$pull',
-		'pullAll'	=> '$pullAll',
-		'rename'	=> '$rename',
+		'inc' => '$inc',
+		'set' => '$set',
+		'unset' => '$unset',
+		'push' => '$push',
+		'pushAll' => '$pushAll',
+		'addToSet' => '$addToSet',
+		'pop' => '$pop',
+		'pull' => '$pull',
+		'pullAll' => '$pullAll',
+		'rename' => '$rename',
 	);
-
 	/**
 	 * @var array
 	 */
@@ -54,34 +53,31 @@ class EMongoModifier extends CComponent
 	 *
 	 * <PRE>
 	 * 'modifier' = array(
-	 *	'fieldName1'=>array('inc' => $incValue),
-	 *	'fieldName2'=>array('set' => $targetValue),
-	 *	'fieldName3'=>array('unset' => 1),
-	 *	'fieldName4'=>array('push' => $pushedValue),
-	 *	'fieldName5'=>array('pushAll' => array($pushedValue1, $pushedValue2)),
-	 *	'fieldName6'=>array('addToSet' => $addedValue),
-	 *	'fieldName7'=>array('pop' => 1),
-	 *	'fieldName8'=>array('pop' => -1),
-	 *	'fieldName9'=>array('pull' => $removedValue),
-	 *	'fieldName10'=>array('pullAll' => array($removedValue1, $removedValue2)),
-	 *	'fieldName11'=>array('rename' => $newFieldName),
+	 * 	'fieldName1'=>array('inc' => $incValue),
+	 * 	'fieldName2'=>array('set' => $targetValue),
+	 * 	'fieldName3'=>array('unset' => 1),
+	 * 	'fieldName4'=>array('push' => $pushedValue),
+	 * 	'fieldName5'=>array('pushAll' => array($pushedValue1, $pushedValue2)),
+	 * 	'fieldName6'=>array('addToSet' => $addedValue),
+	 * 	'fieldName7'=>array('pop' => 1),
+	 * 	'fieldName8'=>array('pop' => -1),
+	 * 	'fieldName9'=>array('pull' => $removedValue),
+	 * 	'fieldName10'=>array('pullAll' => array($removedValue1, $removedValue2)),
+	 * 	'fieldName11'=>array('rename' => $newFieldName),
 	 * );
 	 * </PRE>
 	 * @param array $modifier basic definition of modifiers
 	 * @since v1.3.6
 	 */
-	public function __construct($modifier=null)
+	public function __construct($modifier = null)
 	{
-		if(is_array($modifier))
+		if (is_array($modifier))
 		{
-			foreach($modifier as $fieldName=>$rules)
-			{
-				foreach($rules as $mod=>$value) {
+			foreach ($modifier as $fieldName => $rules)
+				foreach ($rules as $mod => $value)
 					$this->_fields[$fieldName] = array(self::$modifiers[$mod] => $value);
-				}
-			}
 		}
-		else if($modifier instanceof EMongoModifier)
+		else if ($modifier instanceof EMongoModifier)
 			$this->mergeWith($modifier);
 	}
 
@@ -92,14 +88,14 @@ class EMongoModifier extends CComponent
 	public function getModifiers()
 	{
 		$modifier = array();
-		foreach($this->_fields as $fieldName=>$rule)
+		foreach ($this->_fields as $fieldName => $rule)
 		{
-			foreach($rule as $operator=>$value)
+			foreach ($rule as $operator => $value)
 			{
-				if(isset($modifier[$operator]) && is_array($modifier[$operator]))
-					$modifier[$operator] = array_merge($modifier[$operator], array($fieldName=>$value));
+				if (isset($modifier[$operator]) && is_array($modifier[$operator]))
+					$modifier[$operator] = array_merge($modifier[$operator], array($fieldName => $value));
 				else
-					$modifier[$operator] = array($fieldName=>$value);
+					$modifier[$operator] = array($fieldName => $value);
 			}
 		}
 		return $modifier;
@@ -121,17 +117,17 @@ class EMongoModifier extends CComponent
 	 */
 	public function mergeWith($modifier)
 	{
-		if(is_array($modifier))
+		if (is_array($modifier))
 			$modifier = new EMongoModifier($modifier);
-		else if(empty($modifier))
+		else if (empty($modifier))
 			return $this;
 
-		foreach($modifier->getFields() as $fieldName=>$rule)
-		{
+		foreach ($modifier->getFields() as $fieldName => $rule)
 			$this->_fields[$fieldName] = $rule;
-		}
+
 		return $this;
 	}
+
 	/**
 	 * Add a new modifier rule to specific field.
 	 * @param string $fieldName name of the field we want to update
@@ -141,19 +137,21 @@ class EMongoModifier extends CComponent
 	 */
 	public function addModifier($fieldName, $modifier, $value)
 	{
-		$this->_fields[$fieldName] = array(self::$modifiers[$modifier]=>$value);
+		$this->_fields[$fieldName] = array(self::$modifiers[$modifier] => $value);
 		return $this;
 	}
+
 	/**
 	 * Check if we have modifiers to apply.
 	 * @return boolean
 	 */
 	public function getCanApply()
 	{
-		if(count($this->_fields) > 0)
+		if (count($this->_fields) > 0)
 			return true;
 		else
 			return false;
 	}
+
 }
 

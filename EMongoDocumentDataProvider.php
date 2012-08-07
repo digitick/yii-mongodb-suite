@@ -62,11 +62,13 @@ class EMongoDocumentDataProvider extends CDataProvider
 	 */
 	public function __construct($modelClass, $config = array())
 	{
-		if (is_string($modelClass)) {
+		if (is_string($modelClass))
+		{
 			$this->modelClass = $modelClass;
 			$this->model = EMongoDocument::model($modelClass);
 		}
-		else if ($modelClass instanceof EMongoDocument) {
+		else if ($modelClass instanceof EMongoDocument)
+		{
 			$this->modelClass = get_class($modelClass);
 			$this->model = $modelClass;
 		}
@@ -74,7 +76,8 @@ class EMongoDocumentDataProvider extends CDataProvider
 			throw new EMongoException('Invalid model type for ' . __CLASS__);
 
 		$this->_criteria = $this->model->getDbCriteria();
-		if (isset($config['criteria'])) {
+		if (isset($config['criteria']))
+		{
 			$this->_criteria->mergeWith($config['criteria']);
 			unset($config['criteria']);
 		}
@@ -83,10 +86,8 @@ class EMongoDocumentDataProvider extends CDataProvider
 		foreach ($config as $key => $value)
 			$this->$key = $value;
 
-		if ($this->keyField !== null) {
-			if (is_array($this->keyField))
-				throw new EMongoException('This DataProvider cannot handle multi-field primary key.');
-		}
+		if ($this->keyField !== null && is_array($this->keyField))
+			throw new EMongoException('This DataProvider cannot handle multi-field primary key.');
 		else
 			$this->keyField = '_id';
 	}
@@ -120,7 +121,8 @@ class EMongoDocumentDataProvider extends CDataProvider
 	 */
 	public function getSort()
 	{
-		if ($this->_sort === null) {
+		if ($this->_sort === null)
+		{
 			$this->_sort = new EMongoSort;
 			if (($id = $this->getId()) != '')
 				$this->_sort->sortVar = $id . '_sort';
@@ -135,7 +137,8 @@ class EMongoDocumentDataProvider extends CDataProvider
 	 */
 	protected function fetchData()
 	{
-		if (($pagination = $this->getPagination()) !== false) {
+		if (($pagination = $this->getPagination()) !== false)
+		{
 			$pagination->setItemCount($this->getTotalItemCount());
 
 			$this->_criteria->setLimit($pagination->getLimit());
@@ -191,7 +194,8 @@ class EMongoDocumentDataProvider extends CDataProvider
 	{
 		$segs = explode(',', $order);
 		$directions = array();
-		foreach ($segs as $seg) {
+		foreach ($segs as $seg)
+		{
 			if (preg_match('/(.*?)(\s+(desc|asc))?$/i', trim($seg), $matches))
 				$directions[$matches[1]] = isset($matches[3]) && !strcasecmp($matches[3], 'desc');
 			else

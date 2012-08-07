@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Ianaré Sévi
  * @author Dariusz Górecki <darek.krk@gmail.com>
@@ -17,15 +18,13 @@
  * but this one returns instantiated objects
  * @since v1.3.4
  */
-class EMongoCursor
-implements Iterator, Countable
+class EMongoCursor implements Iterator, Countable
 {
 	/**
 	 * @var MongoCursor $_cursor the MongoCursor returned by the query
 	 * @since v1.3.4
 	 */
 	protected $_cursor;
-
 	/**
 	 * @var EMongoDocument $_model the model used for instantiating objects
 	 * @since v1.3.4
@@ -41,8 +40,8 @@ implements Iterator, Countable
 	 */
 	public function __construct(MongoCursor $cursor, EMongoDocument $model)
 	{
-		$this->_cursor	= $cursor;
-		$this->_model	= $model;
+		$this->_cursor = $cursor;
+		$this->_model = $model;
 	}
 
 	/**
@@ -64,7 +63,7 @@ implements Iterator, Countable
 	public function current()
 	{
 		$document = $this->_cursor->current();
-		if(empty($document))
+		if (empty($document))
 			return $document;
 
 		return $this->_model->populateRecord($document);
@@ -154,4 +153,5 @@ implements Iterator, Countable
 	{
 		$this->_cursor->sort($fields);
 	}
+
 }

@@ -23,7 +23,6 @@ class EEmbeddedArraysBehavior extends EMongoDocumentBehavior
 	 * @since v1.0
 	 */
 	public $arrayPropertyName;
-
 	/**
 	 * Class name of doc in array
 	 *
@@ -32,7 +31,6 @@ class EEmbeddedArraysBehavior extends EMongoDocumentBehavior
 	 */
 	public $arrayDocClassName;
 	private $_cache;
-
 	/**
 	 * This flag shows us if we're connected to an embedded document
 	 *
@@ -44,7 +42,8 @@ class EEmbeddedArraysBehavior extends EMongoDocumentBehavior
 	{
 		if (!$this->_embeddedOwner)
 			return parent::events();
-		else {
+		else
+		{
 			// If attached to an embedded document these events are not defined
 			// and would throw an error if attached to
 			$events = parent::events();
@@ -89,10 +88,10 @@ class EEmbeddedArraysBehavior extends EMongoDocumentBehavior
 	 */
 	private function parseExistingArray()
 	{
-		if(is_array($this->getOwner()->{$this->arrayPropertyName}))
+		if (is_array($this->getOwner()->{$this->arrayPropertyName}))
 		{
 			$arrayOfDocs = array();
-			foreach($this->getOwner()->{$this->arrayPropertyName} as $doc)
+			foreach ($this->getOwner()->{$this->arrayPropertyName} as $doc)
 			{
 				$obj = new $this->arrayDocClassName;
 				$obj->setAttributes($doc, false);
@@ -101,7 +100,8 @@ class EEmbeddedArraysBehavior extends EMongoDocumentBehavior
 				// If any EEmbeddedArraysBehavior is attached,
 				// then we should trigger parsing of the newly set
 				// attributes
-				foreach (array_keys($obj->behaviors()) as $name) {
+				foreach (array_keys($obj->behaviors()) as $name)
+				{
 					$behavior = $obj->asa($name);
 					if ($behavior instanceof EEmbeddedArraysBehavior)
 						$behavior->parseExistingArray();
@@ -118,20 +118,21 @@ class EEmbeddedArraysBehavior extends EMongoDocumentBehavior
 	public function afterValidate($event)
 	{
 		parent::afterValidate($event);
-		foreach($this->getOwner()->{$this->arrayPropertyName} as $doc)
+		foreach ($this->getOwner()->{$this->arrayPropertyName} as $doc)
 		{
-			if(!$doc->validate())
+			if (!$doc->validate())
 				$this->getOwner()->addErrors($doc->getErrors());
 		}
 	}
 
 	public function beforeToArray($event)
 	{
-		if (is_array($this->getOwner()->{$this->arrayPropertyName})) {
+		if (is_array($this->getOwner()->{$this->arrayPropertyName}))
+		{
 			$arrayOfDocs = array();
 			$this->_cache = $this->getOwner()->{$this->arrayPropertyName};
 
-			foreach($this->_cache as $doc)
+			foreach ($this->_cache as $doc)
 				$arrayOfDocs[] = $doc->toArray();
 
 			$this->getOwner()->{$this->arrayPropertyName} = $arrayOfDocs;
@@ -149,4 +150,5 @@ class EEmbeddedArraysBehavior extends EMongoDocumentBehavior
 		$this->getOwner()->{$this->arrayPropertyName} = $this->_cache;
 		$this->_cache = null;
 	}
+
 }

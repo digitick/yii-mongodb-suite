@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Ianaré Sévi
  * @author Dariusz Górecki <darek.krk@gmail.com>
@@ -16,11 +17,11 @@
  * This class is a helper for building MongoDB query arrays, it support three syntaxes for adding conditions:
  *
  * 1. 'equals' syntax:
- *	$criteriaObject->fieldName = $value; // this will produce fieldName == value query
+ * 	$criteriaObject->fieldName = $value; // this will produce fieldName == value query
  * 2. fieldName call syntax
- *	$criteriaObject->fieldName($operator, $value); // this will produce fieldName <operator> value
+ * 	$criteriaObject->fieldName($operator, $value); // this will produce fieldName <operator> value
  * 3. addCond method
- *	$criteriaObject->addCond($fieldName, $operator, $vale); // this will produce fieldName <operator> value
+ * 	$criteriaObject->addCond($fieldName, $operator, $vale); // this will produce fieldName <operator> value
  *
  * For operators list {@see EMongoCriteria::$operators}
  *
@@ -34,44 +35,44 @@ class EMongoCriteria extends CComponent
 	 * @var array $operators supported operators lists
 	 */
 	public static $operators = array(
-		'greater'		=> '$gt',
-		'>'				=> '$gt',
-		'greatereq'		=> '$gte',
-		'>='			=> '$gte',
-		'less'			=> '$lt',
-		'<'				=> '$lt',
-		'lesseq'		=> '$lte',
-		'<='			=> '$lte',
-		'noteq'			=> '$ne',
-		'!='			=> '$ne',
-		'<>'			=> '$ne',
-		'in'			=> '$in',
-		'notin'			=> '$nin',
-		'all'			=> '$all',
-		'size'			=> '$size',
-		'type'			=> '$type',
-		'exists'		=> '$exists',
-		'notexists'		=> '$exists',
-		'elemmatch'		=> '$elemMatch',
-		'mod'			=> '$mod',
-		'%'				=> '$mod',
-		'equals'		=> '$$eq',
-		'eq'			=> '$$eq',
-		'=='			=> '$$eq',
-		'where'			=> '$where',
-		'or'			=> '$or'
+		'greater' => '$gt',
+		'>' => '$gt',
+		'greatereq' => '$gte',
+		'>=' => '$gte',
+		'less' => '$lt',
+		'<' => '$lt',
+		'lesseq' => '$lte',
+		'<=' => '$lte',
+		'noteq' => '$ne',
+		'!=' => '$ne',
+		'<>' => '$ne',
+		'in' => '$in',
+		'notin' => '$nin',
+		'all' => '$all',
+		'size' => '$size',
+		'type' => '$type',
+		'exists' => '$exists',
+		'notexists' => '$exists',
+		'elemmatch' => '$elemMatch',
+		'mod' => '$mod',
+		'%' => '$mod',
+		'equals' => '$$eq',
+		'eq' => '$$eq',
+		'==' => '$$eq',
+		'where' => '$where',
+		'or' => '$or'
 	);
 
-	const SORT_ASC		= 1;
-	const SORT_DESC		= -1;
+	const SORT_ASC = 1;
+	const SORT_DESC = -1;
 
-	private $_select		= array();
-	private $_limit			= null;
-	private $_offset		= null;
-	private $_conditions	= array();
-	private $_sort			= array();
-	private $_workingFields	= array();
-	private $_useCursor		= null;
+	private $_select = array();
+	private $_limit = null;
+	private $_offset = null;
+	private $_conditions = array();
+	private $_sort = array();
+	private $_workingFields = array();
+	private $_useCursor = null;
 
 	/**
 	 * Constructor
@@ -80,18 +81,18 @@ class EMongoCriteria extends CComponent
 	 * <PRE>
 	 * 'criteria' = array(
 	 * 	'conditions'=>array(
-	 *		'fieldName1'=>array('greater' => 0),
-	 *		'fieldName2'=>array('>=' => 10),
-	 *		'fieldName3'=>array('<' => 10),
-	 *		'fieldName4'=>array('lessEq' => 10),
-	 *		'fieldName5'=>array('notEq' => 10),
-	 *		'fieldName6'=>array('in' => array(10, 9)),
-	 *		'fieldName7'=>array('notIn' => array(10, 9)),
-	 *		'fieldName8'=>array('all' => array(10, 9)),
-	 *		'fieldName9'=>array('size' => 10),
-	 *		'fieldName10'=>array('exists'),
-	 *		'fieldName11'=>array('notExists'),
-	 *		'fieldName12'=>array('mod' => array(10, 9)),
+	 * 		'fieldName1'=>array('greater' => 0),
+	 * 		'fieldName2'=>array('>=' => 10),
+	 * 		'fieldName3'=>array('<' => 10),
+	 * 		'fieldName4'=>array('lessEq' => 10),
+	 * 		'fieldName5'=>array('notEq' => 10),
+	 * 		'fieldName6'=>array('in' => array(10, 9)),
+	 * 		'fieldName7'=>array('notIn' => array(10, 9)),
+	 * 		'fieldName8'=>array('all' => array(10, 9)),
+	 * 		'fieldName9'=>array('size' => 10),
+	 * 		'fieldName10'=>array('exists'),
+	 * 		'fieldName11'=>array('notExists'),
+	 * 		'fieldName12'=>array('mod' => array(10, 9)),
 	 * 		'fieldName13'=>array('==' => 1)
 	 * 	),
 	 * 	'select'=>array('fieldName', 'fieldName2'),
@@ -103,20 +104,20 @@ class EMongoCriteria extends CComponent
 	 * @param mixed $criteria
 	 * @since v1.0
 	 */
-	public function __construct($criteria=null)
+	public function __construct($criteria = null)
 	{
-		if(is_array($criteria))
+		if (is_array($criteria))
 		{
-			if(isset($criteria['conditions']))
-				foreach($criteria['conditions'] as $fieldName=>$conditions)
+			if (isset($criteria['conditions']))
+				foreach ($criteria['conditions'] as $fieldName => $conditions)
 				{
 					$fieldNameArray = explode('.', $fieldName);
-					if(count($fieldNameArray) === 1)
+					if (count($fieldNameArray) === 1)
 						$fieldName = array_shift($fieldNameArray);
 					else
 						$fieldName = array_pop($fieldNameArray);
 
-					foreach($conditions as $operator => $value)
+					foreach ($conditions as $operator => $value)
 					{
 						$this->setWorkingFields($fieldNameArray);
 						$operator = strtolower($operator);
@@ -125,18 +126,18 @@ class EMongoCriteria extends CComponent
 					}
 				}
 
-			if(isset($criteria['select']))
+			if (isset($criteria['select']))
 				$this->select($criteria['select']);
-			if(isset($criteria['limit']))
+			if (isset($criteria['limit']))
 				$this->limit($criteria['limit']);
-			if(isset($criteria['offset']))
+			if (isset($criteria['offset']))
 				$this->offset($criteria['offset']);
-			if(isset($criteria['sort']))
+			if (isset($criteria['sort']))
 				$this->setSort($criteria['sort']);
-			if(isset($criteria['useCursor']))
+			if (isset($criteria['useCursor']))
 				$this->setUseCursor($criteria['useCursor']);
 		}
-		else if($criteria instanceof EMongoCriteria)
+		else if ($criteria instanceof EMongoCriteria)
 			$this->mergeWith($criteria);
 	}
 
@@ -151,44 +152,44 @@ class EMongoCriteria extends CComponent
 	 */
 	public function mergeWith($criteria)
 	{
-		if(is_array($criteria))
+		if (is_array($criteria))
 			$criteria = new EMongoCriteria($criteria);
-		else if(empty($criteria))
+		else if (empty($criteria))
 			return $this;
 
 		$opTable = array_values(self::$operators);
 
-		foreach($criteria->_conditions as $fieldName=>$conds)
+		foreach ($criteria->_conditions as $fieldName => $conds)
 		{
-			if(
-				is_array($conds) &&
-				count(array_diff(array_keys($conds), $opTable)) == 0
+			if (
+					is_array($conds) &&
+					count(array_diff(array_keys($conds), $opTable)) == 0
 			)
 			{
-				if(isset($this->_conditions[$fieldName]) && is_array($this->_conditions[$fieldName]))
+				if (isset($this->_conditions[$fieldName]) && is_array($this->_conditions[$fieldName]))
 				{
-					foreach($this->_conditions[$fieldName] as $operator => $value)
-						if(!in_array($operator, $opTable))
+					foreach ($this->_conditions[$fieldName] as $operator => $value)
+						if (!in_array($operator, $opTable))
 							unset($this->_conditions[$fieldName][$operator]);
 				}
 				else
 					$this->_conditions[$fieldName] = array();
 
-				foreach($conds as $operator => $value)
+				foreach ($conds as $operator => $value)
 					$this->_conditions[$fieldName][$operator] = $value;
 			}
 			else
 				$this->_conditions[$fieldName] = $conds;
 		}
 
-		if(!empty($criteria->_limit))
-			$this->_limit	= $criteria->_limit;
-		if(!empty($criteria->_offset))
-			$this->_offset	= $criteria->_offset;
-		if(!empty($criteria->_sort))
-			$this->_sort	= array_merge($this->_sort, $criteria->_sort);
-		if(!empty($criteria->_select))
-			$this->_select	= array_merge($this->_select, $criteria->_select);
+		if (!empty($criteria->_limit))
+			$this->_limit = $criteria->_limit;
+		if (!empty($criteria->_offset))
+			$this->_offset = $criteria->_offset;
+		if (!empty($criteria->_sort))
+			$this->_sort = array_merge($this->_sort, $criteria->_sort);
+		if (!empty($criteria->_select))
+			$this->_select = array_merge($this->_select, $criteria->_select);
 
 		return $this;
 	}
@@ -200,28 +201,28 @@ class EMongoCriteria extends CComponent
 	 */
 	public function __call($fieldName, $parameters)
 	{
-		if(isset($parameters[0]))
+		if (isset($parameters[0]))
 			$operatorName = strtolower($parameters[0]);
-		if(isset($parameters[1]))
+		if (isset($parameters[1]))
 			$value = $parameters[1];
-		if(is_numeric($operatorName))
+		if (is_numeric($operatorName))
 		{
 			$operatorName = strtolower(trim($value));
 			$value = (strtolower(trim($value)) === 'exists') ? true : false;
 		}
 
-		if(in_array($operatorName, array_keys(self::$operators)))
+		if (in_array($operatorName, array_keys(self::$operators)))
 		{
 			array_push($this->_workingFields, $fieldName);
 			$fieldName = implode('.', $this->_workingFields);
 			$this->_workingFields = array();
-			switch($operatorName)
+			switch ($operatorName)
 			{
 				case 'exists':
-						$this->addCond($fieldName, $operatorName, true);
+					$this->addCond($fieldName, $operatorName, true);
 					break;
 				case 'notexists':
-						$this->addCond($fieldName, $operatorName, false);
+					$this->addCond($fieldName, $operatorName, false);
 					break;
 				default:
 					$this->addCond($fieldName, $operatorName, $value);
@@ -354,7 +355,8 @@ class EMongoCriteria extends CComponent
 	{
 		$this->_select = array();
 		// Convert the select array to field=>true/false format
-		foreach ($select as $key=>$value) {
+		foreach ($select as $key => $value)
+		{
 			if (is_int($key))
 				$this->_select[$value] = true;
 			else
@@ -385,9 +387,9 @@ class EMongoCriteria extends CComponent
 	 * @param array $fieldList list of fields to select
 	 * @since v1.0
 	 */
-	public function select(array $fieldList=null)
+	public function select(array $fieldList = null)
 	{
-		if($fieldList!==null)
+		if ($fieldList !== null)
 			$this->setSelect(array_merge($this->_select, $fieldList));
 		return $this;
 	}
@@ -444,22 +446,23 @@ class EMongoCriteria extends CComponent
 	{
 		$op = self::$operators[$op];
 
-		if($op == self::$operators['or'])
+		if ($op == self::$operators['or'])
 		{
-			if(!isset($this->_conditions[$op]))
-			{
+			if (!isset($this->_conditions[$op]))
 				$this->_conditions[$op] = array();
-			}
-			$this->_conditions[$op][] = array($fieldName=>$value);
-		} else {
-			if(!isset($this->_conditions[$fieldName]) && $op != self::$operators['equals'])
+
+			$this->_conditions[$op][] = array($fieldName => $value);
+		}
+		else
+		{
+			if (!isset($this->_conditions[$fieldName]) && $op != self::$operators['equals'])
 				$this->_conditions[$fieldName] = array();
 
-			if($op != self::$operators['equals'])
+			if ($op != self::$operators['equals'])
 			{
-				if(
-					!is_array($this->_conditions[$fieldName]) ||
-					count(array_diff(array_keys($this->_conditions[$fieldName]), array_values(self::$operators))) > 0
+				if (
+						!is_array($this->_conditions[$fieldName])
+						|| count(array_diff(array_keys($this->_conditions[$fieldName]), array_values(self::$operators))) > 0
 				)
 				{
 					$this->_conditions[$fieldName] = array();
@@ -471,4 +474,5 @@ class EMongoCriteria extends CComponent
 		}
 		return $this;
 	}
+
 }

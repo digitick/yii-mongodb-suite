@@ -28,7 +28,6 @@ abstract class EMongoPartialDocument extends EMongoDocument
 	 * Returns if this document is only partially loaded
 	 * @return boolean true if the document is partially loaded
 	 */
-
 	public function isPartial()
 	{
 		return $this->_partial;
@@ -61,11 +60,11 @@ abstract class EMongoPartialDocument extends EMongoDocument
 	 */
 	public function __get($name)
 	{
-		if(
-				$this->_partial &&
-				$this->hasEmbeddedDocuments() &&
-				isset(self::$_embeddedConfig[get_class($this)][$name]) &&
-				!in_array($name, $this->_loadedFields)
+		if (
+				$this->_partial
+				&& $this->hasEmbeddedDocuments()
+				&& isset(self::$_embeddedConfig[get_class($this)][$name])
+				&& !in_array($name, $this->_loadedFields)
 		)
 			return null;
 		else
@@ -80,17 +79,16 @@ abstract class EMongoPartialDocument extends EMongoDocument
 	{
 		$return = parent::__set($name, $value);
 
-		if($this->_partial && !in_array($name, $this->_loadedFields))
+		if ($this->_partial && !in_array($name, $this->_loadedFields))
 		{
 			$this->_loadedFields[] = $name;
 
-			if(count($this->_loadedFields) === count($this->attributeNames()))
+			if (count($this->_loadedFields) === count($this->attributeNames()))
 			{
 				$this->_partial = false;
 				$this->_loadedFields = null;
 			}
 		}
-
 		return $return;
 	}
 
@@ -110,14 +108,13 @@ abstract class EMongoPartialDocument extends EMongoDocument
 
 		$attributesSum = array_merge($this->_loadedFields, array_keys($document));
 
-		if(count($attributesSum) === count($this->attributeNames()))
+		if (count($attributesSum) === count($this->attributeNames()))
 		{
 			$this->_partial = false;
 			$this->_loadedFields = null;
 		}
-		else {
+		else
 			$this->_loadedFields = $attributesSum;
-		}
 
 		$this->setAttributes($document, false);
 
@@ -140,7 +137,7 @@ abstract class EMongoPartialDocument extends EMongoDocument
 	 */
 	public function update(array $attributes = null, $modify = false)
 	{
-		if($this->_partial)
+		if ($this->_partial)
 		{
 			if (count($attributes) > 0)
 				$attributes = array_intersect($attributes, $this->_loadedFields);
@@ -157,7 +154,7 @@ abstract class EMongoPartialDocument extends EMongoDocument
 
 		$loadedFields = array_keys($attributes);
 
-		if(count($loadedFields) < count($model->attributeNames()))
+		if (count($loadedFields) < count($model->attributeNames()))
 		{
 			$model->_partial = true;
 			$model->_loadedFields = $loadedFields;
@@ -165,4 +162,5 @@ abstract class EMongoPartialDocument extends EMongoDocument
 
 		return $model;
 	}
+
 }

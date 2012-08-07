@@ -134,7 +134,7 @@ abstract class EMongoGridFS extends EMongoDocument
 			$result = $this->getCollection()->storeFile($filename, $rawData);
 		}
 
-		 // strict compare because driver may return empty array
+		// strict compare because driver may return empty array
 		if ($result !== false)
 		{
 			$this->_id = $result;
@@ -166,7 +166,8 @@ abstract class EMongoGridFS extends EMongoDocument
 
 		if (is_file($this->filename) === true)
 		{
-			if ($this->deleteByPk($this->_id) !== false) {
+			if ($this->deleteByPk($this->_id) !== false)
+			{
 				$result = $this->insertWithPk($this->_id, $attributes);
 				if ($result === true)
 					return true;
@@ -271,4 +272,5 @@ abstract class EMongoGridFS extends EMongoDocument
 		else
 			return false;
 	}
+
 }

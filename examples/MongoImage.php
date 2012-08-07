@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Ianaré Sévi
  * @author Jose Martinez <jmartinez@ibitux.com>
@@ -34,7 +35,7 @@ class MongoImage extends EMongoGridFS
 	 * @param string $className class name
 	 * @return MongoImage the static model class.
 	 */
-	public static function model($className=__CLASS__)
+	public static function model($className = __CLASS__)
 	{
 		return parent::model($className);
 	}
@@ -46,8 +47,9 @@ class MongoImage extends EMongoGridFS
 	public function rules()
 	{
 		return array(
-			array('filename, metadata','safe'),
-			array('filename','required'),
+			array('filename, metadata', 'safe'),
+			array('filename', 'required'),
 		);
 	}
+
 }

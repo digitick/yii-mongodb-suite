@@ -32,9 +32,8 @@ abstract class EMongoSoftDocument extends EMongoDocument
 	 */
 	public function __get($name)
 	{
-		if (array_key_exists($name, $this->softAttributes)) { // Use of array_key_exists is mandatory !!!
+		if (array_key_exists($name, $this->softAttributes)) // Use of array_key_exists is mandatory !!!
 			return $this->softAttributes[$name];
-		}
 		else
 			return parent::__get($name);
 	}
@@ -46,9 +45,8 @@ abstract class EMongoSoftDocument extends EMongoDocument
 	 */
 	public function __set($name, $value)
 	{
-		if (array_key_exists($name, $this->softAttributes)) { // Use of array_key_exists is mandatory !!!
+		if (array_key_exists($name, $this->softAttributes)) // Use of array_key_exists is mandatory !!!
 			$this->softAttributes[$name] = $value;
-		}
 		else
 			parent::__set($name, $value);
 	}

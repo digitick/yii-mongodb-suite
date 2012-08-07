@@ -164,13 +164,11 @@ class EMongoHttpSession extends CHttpSession
 		$options = $this->_options;
 		$options['upsert'] = true;
 		return $this->_collection->update(
-				array($this->idColumn => $id),
-				array(
+						array($this->idColumn => $id), array(
 					$this->dataColumn => $data,
 					$this->expireColumn => $this->getExipireTime(),
 					$this->idColumn => $id
-				),
-				$options
+						), $options
 		);
 	}
 
@@ -210,20 +208,23 @@ class EMongoHttpSession extends CHttpSession
 		parent::regenerateID(false);
 		$newId = session_id();
 		$row = $this->getData($oldId);
-		if (is_null($row)) {
+		if (is_null($row))
+		{
 			$this->_collection->insert(array(
 				$this->idColumn => $newId
 				, $this->expireColumn => $this->getExipireTime()
 					), $this->_options);
 		}
-		else if ($deleteOldSession) {
+		else if ($deleteOldSession)
+		{
 			$this->_collection->update(
 					array($this->idColumn => $oldId)
 					, array($this->idColumn => $newId)
 					, $this->_options
 			);
 		}
-		else {
+		else
+		{
 			$row[$this->idColumn] = $newId;
 			unset($row['_id']);
 			$this->_collection->insert($row, $this->_options);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Ianaré Sévi
  * @author Philippe Gaultier <pgaultier@ibitux.com>
@@ -7,7 +8,6 @@
  * @category tests
  * @package ext.YiiMongoDbSuite.tests
  */
-
 Yii::import('system.test.CDbTestCase');
 
 /**

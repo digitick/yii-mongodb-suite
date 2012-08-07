@@ -74,10 +74,6 @@ class User extends EMongoDocument
 	}
 
 	/**
-	 * RELATIONS
-	 */
-
-	/**
 	 * HAS ONE relation
 	 * @return
 	 */

@@ -18,7 +18,6 @@
  */
 class EMongoDocumentBehavior extends CActiveRecordBehavior
 {
-
 	public function events()
 	{
 		return array_merge(parent::events(), array(

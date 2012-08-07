@@ -8,7 +8,6 @@
  * @category ext
  * @package ext.YiiMongoDbSuite
  */
-
 /**
  * EMongoLogRoute
  *
@@ -82,12 +81,10 @@ class EMongoLogRoute extends CLogRoute
 	 * @var integer capped collection max
 	 */
 	//public $collectionMax = 100;
-
 	/**
 	 * @var boolean capped collection install flag
 	 */
 	//public $installCappedCollection = false;
-
 	/**
 	 * @var boolean Force the update to be synced to disk before returning success.
 	 */
@@ -139,9 +136,8 @@ class EMongoLogRoute extends CLogRoute
 			'fsync' => $this->fsync
 			, 'safe' => $this->safe
 		);
-		if (!is_null($this->timeout)) {
+		if (!is_null($this->timeout))
 			$this->_options['timeout'] = $this->timeout;
-		}
 	}
 
 	/**
@@ -172,7 +168,8 @@ class EMongoLogRoute extends CLogRoute
 	 */
 	protected function processLogs($logs)
 	{
-		foreach ($logs as $log) {
+		foreach ($logs as $log)
+		{
 			$this->_collection->insert(array(
 				$this->message => $log[0],
 				$this->level => $log[1],
