@@ -64,11 +64,11 @@ class EMongoHttpSession extends CHttpSession
 	/**
 	 * @var array insert options
 	 */
-	private $_options;
+	protected $_options;
 	/**
 	 * @var MongoCollection mongo Db collection
 	 */
-	private $_collection;
+	protected $_collection;
 
 	/**
 	 * Returns current MongoCollection object.
