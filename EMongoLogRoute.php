@@ -127,9 +127,13 @@ class EMongoLogRoute extends CLogRoute
 	protected function formatTimestamp($timestamp)
 	{
 		if ($this->timestampType === 'date')
-			$timestamp = new MongoDate(round($timestamp));
+			$timestamp = new MongoDate($timestamp);
 		else if ($this->timestampType === 'string')
-			$timestamp = date('Y-m-d H:i:s', $timestamp);
+		{
+			list($seconds, $microseconds) = explode('.', $timestamp);
+			$timestamp = date('Y-m-d H:i:s.', $seconds) . $microseconds;
+		}
+			
 		return $timestamp;
 	}
 
