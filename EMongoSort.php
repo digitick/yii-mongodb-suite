@@ -45,8 +45,9 @@ class EMongoSort extends CSort
 	 * @return string the order-by columns represented by this sort object.
 	 * This can be put in the ORDER BY clause of a SQL statement.
 	 * @since 1.1.0
+	 * @bedezign Added criteria for new Yii version
 	 */
-	public function getOrderBy()
+	public function getOrderBy($criteria = NULL)
 	{
 		$directions = $this->getDirections();
 		if (empty($directions))
