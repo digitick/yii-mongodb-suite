@@ -29,7 +29,6 @@
  * expireColumn			: expire column name			: default expire
  * fsync				: fsync flag					: default false
  * safe					: safe flag						: default false
- * timeout				: timeout miliseconds			: default null
  *
  */
 class EMongoHttpSession extends CHttpSession
@@ -63,17 +62,13 @@ class EMongoHttpSession extends CHttpSession
 	 */
 	public $safe = false;
 	/**
-	 * @var boolean if "safe" is set, this sets how long (in milliseconds) for the client to wait for a database response.
-	 */
-	public $timeout = null;
-	/**
 	 * @var array insert options
 	 */
-	private $_options;
+	protected $_options;
 	/**
 	 * @var MongoCollection mongo Db collection
 	 */
-	private $_collection;
+	protected $_collection;
 
 	/**
 	 * Returns current MongoCollection object.
@@ -103,8 +98,6 @@ class EMongoHttpSession extends CHttpSession
 			'fsync' => $this->fsync,
 			'safe' => $this->safe
 		);
-		if (!is_null($this->timeout))
-			$this->_options['timeout'] = $this->timeout;
 		parent::init();
 	}
 

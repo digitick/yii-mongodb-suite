@@ -34,7 +34,6 @@
  * timestampType			: float or date					: default float
  * fsync					: fsync flag					: defalut false
  * safe						: safe flag						: defalut false
- * timeout					: timeout miliseconds			: defalut null i.e. MongoCursor::$timeout
  *
  */
 
@@ -71,20 +70,6 @@ class EMongoLogRoute extends CLogRoute
 	 * @var string timestamp column name
 	 */
 	public $timestamp = 'timestamp';
-
-	/**
-	 * @var integer capped collection size
-	 */
-	//public $collectionSize = 10000;
-
-	/**
-	 * @var integer capped collection max
-	 */
-	//public $collectionMax = 100;
-	/**
-	 * @var boolean capped collection install flag
-	 */
-	//public $installCappedCollection = false;
 	/**
 	 * @var boolean Force the update to be synced to disk before returning success.
 	 */
@@ -94,17 +79,13 @@ class EMongoLogRoute extends CLogRoute
 	 */
 	public $safe = false;
 	/**
-	 * @var boolean If "safe" is set, this sets how long (in milliseconds) for the client to wait for a database response.
-	 */
-	public $timeout = null;
-	/**
 	 * @var array Insert options.
 	 */
-	private $_options;
+	protected $_options;
 	/**
 	 * @var MongoCollection Collection object used.
 	 */
-	private $_collection;
+	protected $_collection;
 
 	/**
 	 * Returns current MongoCollection object.
@@ -133,11 +114,9 @@ class EMongoLogRoute extends CLogRoute
 
 		$this->setCollection($this->collectionName);
 		$this->_options = array(
-			'fsync' => $this->fsync
-			, 'safe' => $this->safe
+			'fsync' => $this->fsync,
+			'safe' => $this->safe
 		);
-		if (!is_null($this->timeout))
-			$this->_options['timeout'] = $this->timeout;
 	}
 
 	/**
@@ -148,11 +127,13 @@ class EMongoLogRoute extends CLogRoute
 	protected function formatTimestamp($timestamp)
 	{
 		if ($this->timestampType === 'date')
-			$timestamp = new MongoDate(round($timestamp));
+			$timestamp = new MongoDate($timestamp);
 		else if ($this->timestampType === 'string')
-			$timestamp = date('Y-m-d H:i:s', $timestamp);
-		else
-			$timestamp = $timestamp;
+		{
+			list($seconds, $microseconds) = explode('.', $timestamp);
+			$timestamp = date('Y-m-d H:i:s.', $seconds) . $microseconds;
+		}
+			
 		return $timestamp;
 	}
 
