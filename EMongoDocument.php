@@ -778,6 +778,7 @@ abstract class EMongoDocument extends EMongoEmbeddedDocument
 
 			return $result;
 		}
+		return null;
 	}
 
 	/**
@@ -790,11 +791,15 @@ abstract class EMongoDocument extends EMongoEmbeddedDocument
 		Yii::trace(get_class($this) . '.refresh()', 'ext.MongoDb.EMongoDocument');
 		if (!$this->getIsNewRecord() && $this->getCollection()->count(array('_id' => $this->_id)) == 1)
 		{
-			$this->setAttributes($this->getCollection()->find(array('_id' => $this->_id)), false);
-			return true;
+			$oCursor = $this->getCollection()->find(array('_id' => $this->_id));
+			if ($oCursor)
+			{
+				$this->setAttributes($oCursor->getNext(), false);
+				return true;
+			}
 		}
-		else
-			return false;
+
+		return false;
 	}
 
 	/**
